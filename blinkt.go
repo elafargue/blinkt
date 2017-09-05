@@ -110,22 +110,14 @@ func (o *BlinktObj) SetAll(color string, brightness float64) {
 }
 
 func (o *BlinktObj) Show() {
-	o.gpio.Write(DAT, 0)
-	for i := 0; i < 32; i++ {
-		o.gpio.Write(CLK, 1)
-		o.gpio.Write(CLK, 0)
-	}
+	o.cycleClock(0, 32)
 	for _, ls := range o.ledSettings {
 		o.writeInt(255)
 		o.writeInt(ls.blue)
 		o.writeInt(ls.green)
 		o.writeInt(ls.red)
 	}
-	o.gpio.Write(DAT, 0)
-	for i := 0; i < 36; i++ {
-		o.gpio.Write(CLK, 1)
-		o.gpio.Write(CLK, 0)
-	}
+	o.cycleClock(1, 4)
 }
 
 func (o *BlinktObj) Flash(led int, color string, brightness float64, times int, duration time.Duration) {
@@ -153,6 +145,14 @@ func (o *BlinktObj) Close(color string, brightness float64) {
 		o.Show()
 	}
 	o.gpio.Close()
+}
+
+func (o *BlinktObj) cycleClock(value int, cycles int) {
+	o.gpio.Write(DAT, value)
+	for i := 0; i < cycles; i++ {
+		o.gpio.Write(CLK, 1)
+		o.gpio.Write(CLK, 0)
+	}
 }
 
 func (o *BlinktObj) writeInt(value int) {
