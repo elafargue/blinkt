@@ -24,6 +24,7 @@
 package blinkt
 
 import (
+	"log"
 	"math"
 	"strconv"
 	"time"
@@ -46,12 +47,6 @@ type BlinktObj struct {
 	gpio        gpio.Gpio
 }
 
-type ledSetting struct {
-	red   int
-	blue  int
-	green int
-}
-
 type Blinkt interface {
 	Set(led int, color string, brightness float64)
 	SetAll(color string, brightness float64)
@@ -60,8 +55,14 @@ type Blinkt interface {
 	Close(color string, brightness float64)
 }
 
+type ledSetting struct {
+	red   int
+	blue  int
+	green int
+}
+
 func NewBlinkt(color string, brightness float64) Blinkt {
-	o := BlinktObj{
+	o := &BlinktObj{
 		make([]*ledSetting, 8),
 		gpio.NewGpio(),
 	}
@@ -80,14 +81,23 @@ func NewBlinkt(color string, brightness float64) Blinkt {
 	}
 	o.SetAll(Off, 0)
 	o.Show()
-	return &o
+	return o
 }
 
 func (o *BlinktObj) Set(led int, color string, brightness float64) {
 	ls := o.ledSettings[led]
-	r, _ := strconv.ParseInt(color[:2], 16, 32)
-	g, _ := strconv.ParseInt(color[2:4], 16, 32)
-	b, _ := strconv.ParseInt(color[4:6], 16, 32)
+	r, err := strconv.ParseInt(color[:2], 16, 32)
+	if err != nil {
+		log.Panicln(err.Error())
+	}
+	g, err := strconv.ParseInt(color[2:4], 16, 32)
+	if err != nil {
+		log.Panicln(err.Error())
+	}
+	b, err := strconv.ParseInt(color[4:6], 16, 32)
+	if err != nil {
+		log.Panicln(err.Error())
+	}
 	ls.red = int(math.Floor(float64(r)*brightness + 0.5))
 	ls.green = int(math.Floor(float64(g)*brightness + 0.5))
 	ls.blue = int(math.Floor(float64(b)*brightness + 0.5))
