@@ -117,14 +117,14 @@ func (o *BlinktObj) SetAll(color string, brightness float64) {
 }
 
 func (o *BlinktObj) Show() {
-	o.cycleClock(0, 32)
+	o.write(0, 32)
 	for _, ls := range o.ledSettings {
 		o.writeInt(255)
 		o.writeInt(ls.blue)
 		o.writeInt(ls.green)
 		o.writeInt(ls.red)
 	}
-	o.cycleClock(1, 4)
+	o.write(1, 4)
 }
 
 func (o *BlinktObj) Flash(led int, color string, brightness float64, times int, duration time.Duration) {
@@ -154,25 +154,22 @@ func (o *BlinktObj) Close(color string, brightness float64) {
 	o.gpio.Close()
 }
 
-func (o *BlinktObj) cycleClock(value, cycles int) {
+func (o *BlinktObj) write(value, times int) {
 	o.gpio.Write(DAT, value)
-	for i := 0; i < cycles; i++ {
+	for i := 0; i < times; i++ {
 		o.gpio.Write(CLK, 1)
 		o.gpio.Write(CLK, 0)
 	}
 }
 
 func (o *BlinktObj) writeInt(value int) {
-	for i := 0; i < 8; i++ {
-		o.gpio.Write(DAT, value&128>>7)
-		o.gpio.Write(CLK, 1)
-		o.gpio.Write(CLK, 0)
-		value <<= 1
+	for i := uint(0); i < 8; i++ {
+		o.write(value<<i&128>>7, 1)
 	}
 }
 
 func hexToColor(hex string, brightness float64) int {
-	i, err := strconv.ParseInt(hex, 16, 32)
+	i, err := strconv.ParseInt(hex, 16, 8)
 	if err != nil {
 		log.Panicln(err.Error())
 	}
