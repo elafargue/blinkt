@@ -169,7 +169,7 @@ func (o *BlinktObj) writeInt(value int) {
 }
 
 func hexToColor(hex string, brightness float64) int {
-	i, err := strconv.ParseInt(hex, 16, 8)
+	i, err := strconv.ParseInt(hex, 16, 32)
 	if err != nil {
 		log.Panicln(err.Error())
 	}
