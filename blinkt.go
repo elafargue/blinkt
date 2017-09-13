@@ -124,7 +124,7 @@ func (o *BlinktObj) Show() {
 		o.writeInt(ls.green)
 		o.writeInt(ls.red)
 	}
-	o.write(1, 4)
+	o.write(1, 32)
 }
 
 func (o *BlinktObj) Flash(led int, color string, brightness float64, times int, duration time.Duration) {
@@ -163,8 +163,8 @@ func (o *BlinktObj) write(value, times int) {
 }
 
 func (o *BlinktObj) writeInt(value int) {
-	for i := uint(0); i < 8; i++ {
-		o.write(value<<i&128>>7, 1)
+	for i := 0; i < 8; i++ {
+		o.write(value<<uint(i)&128>>7, 1)
 	}
 }
 
