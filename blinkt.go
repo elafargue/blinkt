@@ -43,7 +43,7 @@ const (
 	Off   = "000000"
 )
 
-var gamma = []int{
+var gamma = [256]int{
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1,
 	1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2,
@@ -62,7 +62,7 @@ var gamma = []int{
 	215, 218, 220, 223, 225, 228, 231, 233, 236, 239, 241, 244, 247, 249, 252, 255}
 
 type BlinktObj struct {
-	ledSettings []*ledSetting
+	ledSettings [8]ledSetting
 	gpio        gpio.Gpio
 }
 
@@ -76,17 +76,14 @@ type Blinkt interface {
 
 type ledSetting struct {
 	red   int
-	blue  int
 	green int
+	blue  int
 }
 
 func NewBlinkt(color string, brightness float64) Blinkt {
 	o := &BlinktObj{
-		make([]*ledSetting, 8),
+		[8]ledSetting{},
 		gpio.NewGpio(),
-	}
-	for i := 0; i < 8; i++ {
-		o.ledSettings[i] = &ledSetting{}
 	}
 	for i := 3; i >= 0; i-- {
 		for j := 0.0; j < brightness; j += brightness / 10 {
@@ -104,14 +101,14 @@ func NewBlinkt(color string, brightness float64) Blinkt {
 }
 
 func (o *BlinktObj) Set(led int, color string, brightness float64) {
-	ls := o.ledSettings[led]
+	ls := &o.ledSettings[led]
 	ls.red = hexToColor(color[:2], brightness)
 	ls.green = hexToColor(color[2:4], brightness)
 	ls.blue = hexToColor(color[4:6], brightness)
 }
 
 func (o *BlinktObj) SetAll(color string, brightness float64) {
-	for i := 0; i < 8; i++ {
+	for i, _ := range o.ledSettings {
 		o.Set(i, color, brightness)
 	}
 }
