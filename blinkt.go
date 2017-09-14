@@ -124,7 +124,7 @@ func (o *BlinktObj) Show() {
 		o.writeInt(ls.green)
 		o.writeInt(ls.red)
 	}
-	o.write(1, 32)
+	o.write(0, 32)
 }
 
 func (o *BlinktObj) Flash(led int, color string, brightness float64, times int, duration time.Duration) {
