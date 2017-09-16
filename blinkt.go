@@ -71,7 +71,7 @@ type Blinkt interface {
 	SetAll(color string, brightness float64)
 	Flash(led int, color string, brightness float64, times int, duration time.Duration)
 	Show()
-	Close(color string, brightness float64)
+	Cleanup(color string, brightness float64)
 }
 
 type ledSetting struct {
@@ -135,7 +135,7 @@ func (o *BlinktObj) Flash(led int, color string, brightness float64, times int, 
 	}
 }
 
-func (o *BlinktObj) Close(color string, brightness float64) {
+func (o *BlinktObj) Cleanup(color string, brightness float64) {
 	o.SetAll(color, brightness)
 	o.Show()
 	for i := 0; i <= 3; i++ {
@@ -148,7 +148,7 @@ func (o *BlinktObj) Close(color string, brightness float64) {
 		o.Set(7-i, Off, 0)
 		o.Show()
 	}
-	o.gpio.Close()
+	o.gpio.Cleanup()
 }
 
 func (o *BlinktObj) write(value, times int) {
