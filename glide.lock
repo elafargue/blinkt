@@ -1,0 +1,6 @@
+hash: 3e9085c3e8c4d31685a12602902d54601c24d9087587bc6c73a3a948d2904a6e
+updated: 2017-09-27T13:23:36.476467688-04:00
+imports:
+- name: github.com/ngpitt/gpio
+  version: 3ccc354bca934a80114c637b09d6e605613af766
+testImports: []

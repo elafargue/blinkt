@@ -1,0 +1,4 @@
+package: github.com/ngpitt/blinkt
+import:
+- package: github.com/ngpitt/gpio
+  version: HEAD
